@@ -22,6 +22,8 @@ namespace PluginLoaderTests
 			Test(LazyLoadedBuilderworks);
 			Test(CantLazyLoadWrongDll);
 			Test(CantLazyLoadWrongType);
+			Test(LoadWorksWithString);
+			Test(GetWorksWithString);
 		}
 
 		public static void Test(Func<bool> test)
@@ -37,6 +39,20 @@ namespace PluginLoaderTests
 				Console.WriteLine(": {0} - {1}", ex.GetType(), ex.Message);
 			}
 			Console.WriteLine();
+		}
+
+		public static bool GetWorksWithString()
+		{
+			var builder = PluginLoader.GetPlugins<ITestPluginBuilder>("TestPlugin.dll").First().Value;
+			var plugin = builder.Build();
+			return plugin != null && plugin.TestValue >= int.MinValue;
+		}
+
+		public static bool LoadWorksWithString()
+		{
+			var builder = PluginLoader.LoadPlugins<ITestPluginBuilder>("TestPlugin.dll").First();
+			var plugin = builder.Build();
+			return plugin != null && plugin.TestValue >= int.MinValue;
 		}
 
 		public static bool CantLazyLoadWrongType()
